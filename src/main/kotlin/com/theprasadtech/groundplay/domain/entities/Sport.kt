@@ -1,4 +1,4 @@
-package com.theprasadtech.groundplay.domain
+package com.theprasadtech.groundplay.domain.entities
 
 enum class Sport {
     CRICKET,
