@@ -1,5 +1,7 @@
 package com.theprasadtech.groundplay.domain.entities
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.theprasadtech.groundplay.utils.PointDeserializer
 import jakarta.persistence.*
 import org.locationtech.jts.geom.Point
 import java.time.LocalDateTime
@@ -29,10 +31,10 @@ data class GameEntity(
     @Column(nullable = false)
     val status: Boolean,
 
-    @ManyToOne
-    @JoinColumn(name = "organizer_id")
-    val organizer: PlayerEntity,
+    @Column(nullable = false)
+    val organizer: Long,
 
+    @JsonDeserialize(using = PointDeserializer::class)
     @Column(columnDefinition = "GEOGRAPHY(Point, 4326)", nullable = false)
     val coordinates: Point
 )

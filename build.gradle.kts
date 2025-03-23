@@ -33,8 +33,6 @@ dependencies {
 	testImplementation("io.projectreactor:reactor-test")
 	testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
 	testImplementation("org.jetbrains.kotlinx:kotlinx-coroutines-test")
-	testImplementation("com.h2database:h2:2.2.224")
-	implementation("org.orbisgis:h2gis-ext:2.0.0")
 	testRuntimeOnly("org.junit.platform:junit-platform-launcher")
 }
 
