@@ -9,9 +9,13 @@ import org.springframework.test.web.servlet.MockMvc
 
 @SpringBootTest
 @AutoConfigureMockMvc
-class PlayerControllerTest @Autowired constructor(val mockMvc: MockMvc) {
-    @Test
-    fun `test HTTP 200 for successfully creating a Player`() {
-        assertThat(true==true)
+class PlayerControllerTest
+    @Autowired
+    constructor(
+        val mockMvc: MockMvc,
+    ) {
+        @Test
+        fun `test HTTP 200 for successfully creating a Player`() {
+            assertThat(true == true)
+        }
     }
-}

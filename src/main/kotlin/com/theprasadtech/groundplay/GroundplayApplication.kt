@@ -7,5 +7,5 @@ import org.springframework.boot.runApplication
 class GroundplayApplication
 
 fun main(args: Array<String>) {
-	runApplication<GroundplayApplication>(*args)
+    runApplication<GroundplayApplication>(*args)
 }

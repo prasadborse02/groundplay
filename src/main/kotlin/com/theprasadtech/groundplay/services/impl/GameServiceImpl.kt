@@ -10,13 +10,16 @@ import org.locationtech.jts.geom.Point
 import org.springframework.stereotype.Service
 
 @Service
-class GameServiceImpl(private val gameRepository: GameRepository): GameService {
-    override fun save(gameEntity: GameEntity): GameEntity {
-//        gameRepository.findExistingGame()
-        return gameRepository.save(gameEntity)
-    }
+class GameServiceImpl(
+    private val gameRepository: GameRepository,
+) : GameService {
+    override fun save(gameEntity: GameEntity): GameEntity = gameRepository.save(gameEntity)
 
-    override fun convertToPoint(coordinatesDto: CoordinatesDto): Point {
-        return GeometryFactory().createPoint(Coordinate(coordinatesDto.x, coordinatesDto.y))
-    }
+    override fun getById(id: Long): GameEntity =
+        gameRepository
+            .findById(id)
+            .orElseThrow { NoSuchElementException("Game not found with id: $id") }
+
+    override fun convertToPoint(coordinatesDto: CoordinatesDto): Point =
+        GeometryFactory().createPoint(Coordinate(coordinatesDto.x, coordinatesDto.y))
 }

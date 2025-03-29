@@ -2,7 +2,14 @@ package com.theprasadtech.groundplay.domain.entities
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
 import com.theprasadtech.groundplay.utils.PointDeserializer
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.EnumType
+import jakarta.persistence.Enumerated
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
 import org.locationtech.jts.geom.Point
 import java.time.LocalDateTime
 
@@ -12,29 +19,23 @@ data class GameEntity(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long? = null,
-
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    val sport: Sport,
-
-    val location: String? = null,
-
+    var sport: Sport,
+    var location: String? = null,
     @Column(nullable = false)
-    val startTime: LocalDateTime,
-
+    var startTime: LocalDateTime,
     @Column(nullable = false)
-    val endTime: LocalDateTime,
-
+    var endTime: LocalDateTime,
     @Column(columnDefinition = "TEXT")
-    val description: String? = null,
-
+    var description: String? = null,
     @Column(nullable = false)
-    val status: Boolean,
-
+    var teamSize: Int,
+    @Column(nullable = false)
+    var status: Boolean,
     @Column(nullable = false)
     val organizer: Long,
-
     @JsonDeserialize(using = PointDeserializer::class)
     @Column(columnDefinition = "GEOGRAPHY(Point, 4326)", nullable = false)
-    val coordinates: Point
+    var coordinates: Point,
 )

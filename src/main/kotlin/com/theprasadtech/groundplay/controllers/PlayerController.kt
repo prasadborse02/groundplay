@@ -9,11 +9,15 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-class PlayerController(private val playerService: PlayerService) {
-
+class PlayerController(
+    private val playerService: PlayerService,
+) {
     @PostMapping(path = ["/v1/player"])
-    fun createPlayer(@RequestBody playerDto: PlayerDto): PlayerDto {
-        return playerService.save(playerDto.toPlayerEntity()).toPlayerDto()
-    }
+    fun createPlayer(
+        @RequestBody playerDto: PlayerDto,
+    ): PlayerDto = playerService.save(playerDto.toPlayerEntity()).toPlayerDto()
 
+    // TODO: Get all players by gameId
+
+    // TODO: Update player details
 }

@@ -9,10 +9,13 @@ import org.locationtech.jts.geom.GeometryFactory
 import org.locationtech.jts.geom.Point
 
 class PointDeserializer : JsonDeserializer<Point>() {
-    override fun deserialize(p: JsonParser, ctxt: DeserializationContext): Point {
+    override fun deserialize(
+        p: JsonParser,
+        ctxt: DeserializationContext,
+    ): Point {
         val node: JsonNode = p.codec.readTree(p)
         val x = node.get("x").asDouble()
         val y = node.get("y").asDouble()
-        return GeometryFactory().createPoint(Coordinate(x,y))
+        return GeometryFactory().createPoint(Coordinate(x, y))
     }
 }

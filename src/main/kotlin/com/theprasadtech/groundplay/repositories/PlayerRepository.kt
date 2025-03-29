@@ -5,6 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PlayerRepository : JpaRepository<PlayerEntity,Long?> {
+interface PlayerRepository : JpaRepository<PlayerEntity, Long?> {
     fun findByPhone(phone: String): PlayerEntity?
 }

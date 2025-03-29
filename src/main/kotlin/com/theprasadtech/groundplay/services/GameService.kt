@@ -7,5 +7,7 @@ import org.locationtech.jts.geom.Point
 interface GameService {
     fun save(gameEntity: GameEntity): GameEntity
 
+    fun getById(id: Long): GameEntity
+
     fun convertToPoint(coordinatesDto: CoordinatesDto): Point
 }

@@ -6,5 +6,5 @@ import java.io.Serializable
 @Embeddable
 data class GameMemberId(
     val gameId: Long,
-    val playerId: Long
+    val playerId: Long,
 ) : Serializable
