@@ -1,19 +1,24 @@
 package com.theprasadtech.groundplay.controllers
 
 import com.theprasadtech.groundplay.domain.dto.GameDto
+import com.theprasadtech.groundplay.domain.dto.GameUpdateRequestDto
+import com.theprasadtech.groundplay.domain.entities.GameEntity
 import com.theprasadtech.groundplay.services.GameService
 import com.theprasadtech.groundplay.toGameDto
 import com.theprasadtech.groundplay.toGameEntity
+import com.theprasadtech.groundplay.toGameUpdateRequest
 import com.theprasadtech.groundplay.utils.logger
 import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
+import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
-import org.springframework.web.server.ResponseStatusException
 
 @RestController
 class GameController(
@@ -28,41 +33,60 @@ class GameController(
     )
     fun createGame(
         @Valid @RequestBody gameDto: GameDto,
-    ): GameDto {
+    ): ResponseEntity<GameDto> {
         logger.info("Received game creation request: $gameDto")
-        try {
-            val savedGame = gameService.save(gameDto.toGameEntity())
+        // TODO: Add another exception for missing arguments
+        return try {
+            val savedGame = gameService.create(gameDto.toGameEntity())
             logger.info("Successfully created game with ID: ${savedGame.id}")
-            return savedGame.toGameDto()
-        } catch (e: Exception) {
+            ResponseEntity(savedGame.toGameDto(), HttpStatus.CREATED)
+        } catch (e: IllegalArgumentException) {
             logger.error("Error creating game: ", e)
-            throw e
+            ResponseEntity(HttpStatus.CONFLICT)
         }
     }
 
     // TODO: List All active games within radius of lat long
+    @GetMapping("/v1/games/nearby")
+    fun getNearbyGames(
+        @RequestParam lat: Double,
+        @RequestParam lon: Double,
+        @RequestParam radiusKm: Double,
+    ): ResponseEntity<List<GameEntity>> =
+        try {
+            ResponseEntity(gameService.getGamesNearby(lat, lon, radiusKm), HttpStatus.OK)
+        } catch (e: IllegalArgumentException) {
+            ResponseEntity(HttpStatus.BAD_REQUEST)
+        }
 
-    // TODO: Get game details by Id
     @GetMapping(
         path = ["/v1/gameDetails/{id}"],
     )
     fun getGameDetails(
         @PathVariable id: Long,
-    ): GameDto {
-        try {
-            val gameDetails = gameService.getById(id)
+    ): ResponseEntity<GameDto> {
+        logger.info("Fetching game details for ID: $id")
+        val game = gameService.getById(id)?.toGameDto()
+        return game?.let {
             logger.info("Successfully fetched game with ID: $id")
-            return gameDetails.toGameDto()
-        } catch (e: NoSuchElementException) {
+            ResponseEntity(it, HttpStatus.OK)
+        } ?: run {
             logger.error("Game not found with ID: $id")
-            throw ResponseStatusException(HttpStatus.NOT_FOUND, "Game not found", e)
-        } catch (e: Exception) {
-            logger.error("Error while fetching game: ", e)
-            throw ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Error fetching game details", e)
+            ResponseEntity(HttpStatus.NOT_FOUND)
         }
     }
 
-    // TODO: Validate & Update game details such as - startTime, endTime, Sport, Location, Corodinates
-
-    // TODO: Inactive the game by Id by organizer
+    @PatchMapping(
+        path = ["/v1/updateGame/{id}"],
+    )
+    fun updateGameDetails(
+        @PathVariable id: Long,
+        @Valid @RequestBody gameUpdateRequestDto: GameUpdateRequestDto,
+    ): ResponseEntity<GameDto> =
+        try {
+            val updatedGame = gameService.updateGame(id, gameUpdateRequestDto.toGameUpdateRequest())
+            ResponseEntity(updatedGame.toGameDto(), HttpStatus.OK)
+        } catch (e: IllegalStateException) {
+            ResponseEntity(HttpStatus.BAD_REQUEST)
+        }
 }

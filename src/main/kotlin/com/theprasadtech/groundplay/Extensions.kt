@@ -1,7 +1,9 @@
 package com.theprasadtech.groundplay
 
+import com.theprasadtech.groundplay.domain.GameUpdateRequest
 import com.theprasadtech.groundplay.domain.dto.CoordinatesDto
 import com.theprasadtech.groundplay.domain.dto.GameDto
+import com.theprasadtech.groundplay.domain.dto.GameUpdateRequestDto
 import com.theprasadtech.groundplay.domain.dto.PlayerDto
 import com.theprasadtech.groundplay.domain.entities.GameEntity
 import com.theprasadtech.groundplay.domain.entities.PlayerEntity
@@ -44,6 +46,20 @@ fun GameDto.toGameEntity() =
             geometryFactory.createPoint(
                 Coordinate(this.coordinates.x, this.coordinates.y),
             ),
+    )
+
+fun GameUpdateRequestDto.toGameUpdateRequest() =
+    GameUpdateRequest(
+        id = this.id,
+        sport = this.sport,
+        location = this.location,
+        startTime = this.startTime,
+        endTime = this.endTime,
+        description = this.description,
+        teamSize = this.teamSize,
+        status = this.status,
+        organizer = this.organizer,
+        coordinates = this.coordinates?.let { CoordinatesDto(it.x, it.y) },
     )
 
 fun PlayerEntity.toPlayerDto() =

@@ -1,7 +1,9 @@
 package com.theprasadtech.groundplay.domain.entities
 
 import com.fasterxml.jackson.databind.annotation.JsonDeserialize
+import com.fasterxml.jackson.databind.annotation.JsonSerialize
 import com.theprasadtech.groundplay.utils.PointDeserializer
+import com.theprasadtech.groundplay.utils.PointSerializer
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
@@ -35,6 +37,7 @@ data class GameEntity(
     var status: Boolean,
     @Column(nullable = false)
     val organizer: Long,
+    @JsonSerialize(using = PointSerializer::class)
     @JsonDeserialize(using = PointDeserializer::class)
     @Column(columnDefinition = "GEOGRAPHY(Point, 4326)", nullable = false)
     var coordinates: Point,
