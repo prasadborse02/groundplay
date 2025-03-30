@@ -1,3 +1,7 @@
 package com.theprasadtech.groundplay.services
 
-interface GameMemberService
+import com.theprasadtech.groundplay.domain.entities.GameMemberEntity
+
+interface GameMemberService {
+    fun create(gameMemberEntity: GameMemberEntity): GameMemberEntity
+}

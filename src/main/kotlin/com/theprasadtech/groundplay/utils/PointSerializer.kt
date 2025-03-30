@@ -5,13 +5,17 @@ import com.fasterxml.jackson.databind.JsonSerializer
 import com.fasterxml.jackson.databind.SerializerProvider
 import org.locationtech.jts.geom.Point
 
-class PointSerializer: JsonSerializer<Point>() {
-     override fun serialize(point: Point?, gen: JsonGenerator?, serializers: SerializerProvider?) {
-         if (gen != null && point != null) {
-             gen.writeStartObject()
-             gen.writeNumberField("x", point.x)
-             gen.writeNumberField("y", point.y)
-             gen.writeEndObject()
-         }
-     }
+class PointSerializer : JsonSerializer<Point>() {
+    override fun serialize(
+        point: Point?,
+        gen: JsonGenerator?,
+        serializers: SerializerProvider?,
+    ) {
+        if (gen != null && point != null) {
+            gen.writeStartObject()
+            gen.writeNumberField("x", point.x)
+            gen.writeNumberField("y", point.y)
+            gen.writeEndObject()
+        }
+    }
 }

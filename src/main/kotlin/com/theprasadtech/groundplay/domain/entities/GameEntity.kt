@@ -9,7 +9,7 @@ import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
 import jakarta.persistence.GeneratedValue
-import jakarta.persistence.GenerationType
+import jakarta.persistence.GenerationType.IDENTITY
 import jakarta.persistence.Id
 import jakarta.persistence.Table
 import org.locationtech.jts.geom.Point
@@ -19,7 +19,7 @@ import java.time.LocalDateTime
 @Table(name = "games")
 data class GameEntity(
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = IDENTITY)
     val id: Long? = null,
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

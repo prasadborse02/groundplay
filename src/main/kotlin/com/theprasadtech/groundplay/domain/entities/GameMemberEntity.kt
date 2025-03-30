@@ -8,13 +8,14 @@ import jakarta.persistence.Id
 import jakarta.persistence.Table
 
 @Entity
-@Table(name = "players")
-data class PlayerEntity(
+@Table(name = "game_members")
+data class GameMemberEntity(
     @Id
     @GeneratedValue(strategy = IDENTITY)
-    val id: Long? = null,
+    val id: Long?,
     @Column(nullable = false)
-    val name: String,
-    @Column(nullable = false, unique = true)
-    val phone: String,
+    val gameId: Long,
+    @Column(nullable = false)
+    val playerId: Long,
+    val status: Boolean,
 )

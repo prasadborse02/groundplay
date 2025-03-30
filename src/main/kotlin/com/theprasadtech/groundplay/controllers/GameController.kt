@@ -2,7 +2,6 @@ package com.theprasadtech.groundplay.controllers
 
 import com.theprasadtech.groundplay.domain.dto.GameDto
 import com.theprasadtech.groundplay.domain.dto.GameUpdateRequestDto
-import com.theprasadtech.groundplay.domain.entities.GameEntity
 import com.theprasadtech.groundplay.services.GameService
 import com.theprasadtech.groundplay.toGameDto
 import com.theprasadtech.groundplay.toGameEntity
@@ -51,9 +50,9 @@ class GameController(
         @RequestParam lat: Double,
         @RequestParam lon: Double,
         @RequestParam radiusKm: Double,
-    ): ResponseEntity<List<GameEntity>> =
+    ): ResponseEntity<List<GameDto>> =
         try {
-            ResponseEntity(gameService.getGamesNearby(lat, lon, radiusKm), HttpStatus.OK)
+            ResponseEntity(gameService.getGamesNearby(lat, lon, radiusKm).map { it.toGameDto() }, HttpStatus.OK)
         } catch (e: IllegalArgumentException) {
             ResponseEntity(HttpStatus.BAD_REQUEST)
         }

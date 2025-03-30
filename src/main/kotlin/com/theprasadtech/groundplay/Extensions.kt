@@ -2,8 +2,14 @@ package com.theprasadtech.groundplay
 
 import com.theprasadtech.groundplay.domain.GameUpdateRequest
 import com.theprasadtech.groundplay.domain.PlayerUpdateRequest
-import com.theprasadtech.groundplay.domain.dto.*
+import com.theprasadtech.groundplay.domain.dto.CoordinatesDto
+import com.theprasadtech.groundplay.domain.dto.GameDto
+import com.theprasadtech.groundplay.domain.dto.GameMemberDto
+import com.theprasadtech.groundplay.domain.dto.GameUpdateRequestDto
+import com.theprasadtech.groundplay.domain.dto.PlayerDto
+import com.theprasadtech.groundplay.domain.dto.PlayerUpdateRequestDto
 import com.theprasadtech.groundplay.domain.entities.GameEntity
+import com.theprasadtech.groundplay.domain.entities.GameMemberEntity
 import com.theprasadtech.groundplay.domain.entities.PlayerEntity
 import org.locationtech.jts.geom.Coordinate
 import org.locationtech.jts.geom.GeometryFactory
@@ -48,6 +54,22 @@ fun GameDto.toGameEntity() =
             ),
     )
 
+fun GameMemberEntity.toGameMemberDto() =
+    GameMemberDto(
+        id = this.id,
+        gameId = this.gameId,
+        playerId = this.playerId,
+        status = this.status,
+    )
+
+fun GameMemberDto.toGameMemberEntity() =
+    GameMemberEntity(
+        id = this.id,
+        gameId = this.gameId,
+        playerId = this.playerId,
+        status = this.status,
+    )
+
 fun GameUpdateRequestDto.toGameUpdateRequest() =
     GameUpdateRequest(
         sport = this.sport,
@@ -77,5 +99,5 @@ fun PlayerDto.toPlayerEntity() =
 
 fun PlayerUpdateRequestDto.toPlayerUpdateRequest() =
     PlayerUpdateRequest(
-        name = this.name
+        name = this.name,
     )
