@@ -14,6 +14,7 @@ import org.locationtech.jts.geom.Point
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.time.Duration
+import java.time.LocalDateTime
 
 @Service
 class GameServiceImpl(
@@ -25,6 +26,9 @@ class GameServiceImpl(
     override fun create(gameEntity: GameEntity): GameEntity {
         require(null == gameEntity.id)
         check(playerRepository.existsById(gameEntity.organizer))
+        check(gameEntity.startTime.isBefore(gameEntity.endTime)) { "Start time must be before end time" }
+        check(Duration.between(gameEntity.startTime, gameEntity.endTime).toHours() <= 24) { "Game duration cannot exceed 24 hours" }
+        check(gameEntity.startTime.isAfter(LocalDateTime.now())) {"Game must be scheduled for the future"}
         val conflicts = gameRepository.findConflictingGames(gameEntity.startTime, gameEntity.endTime, gameEntity.coordinates)
 
         if (conflicts.isNotEmpty()) {
@@ -62,6 +66,7 @@ class GameServiceImpl(
 
         check(finalStartTime.isBefore(finalEndTime)) { "Start time must be before end time" }
         check(Duration.between(finalStartTime, finalEndTime).toHours() <= 24) { "Game duration cannot exceed 24 hours" }
+        check(finalStartTime.isAfter(LocalDateTime.now())) {"Game must be scheduled for the future"}
 
         gameUpdateRequest.teamSize?.let {
             check(it <= 50) { "Team size cannot exceed 50 players" }

@@ -23,22 +23,24 @@ data class GameEntity(
     val id: Long? = null,
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
-    var sport: Sport,
-    var location: String? = null,
+    val sport: Sport,
+    val location: String? = null,
     @Column(nullable = false)
-    var startTime: LocalDateTime,
+    val startTime: LocalDateTime,
     @Column(nullable = false)
-    var endTime: LocalDateTime,
+    val endTime: LocalDateTime,
     @Column(columnDefinition = "TEXT")
-    var description: String? = null,
+    val description: String? = null,
     @Column(nullable = false)
-    var teamSize: Int,
+    val teamSize: Int,
     @Column(nullable = false)
-    var status: Boolean,
+    val enrolledPlayers: Int = 0,
+    @Column(nullable = false)
+    val status: Boolean,
     @Column(nullable = false)
     val organizer: Long,
     @JsonSerialize(using = PointSerializer::class)
     @JsonDeserialize(using = PointDeserializer::class)
     @Column(columnDefinition = "GEOGRAPHY(Point, 4326)", nullable = false)
-    var coordinates: Point,
+    val coordinates: Point,
 )

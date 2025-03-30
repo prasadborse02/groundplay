@@ -12,7 +12,7 @@ interface GameService {
 
     fun getGamesNearby(
         lat: Double,
-        log: Double,
+        lon: Double,
         radiusInKm: Double,
     ): List<GameEntity>
 

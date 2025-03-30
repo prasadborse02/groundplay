@@ -8,18 +8,17 @@ import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
 
 data class GameUpdateRequest(
-    var id: Long?,
-    var sport: Sport?,
-    var location: String?,
+    val sport: Sport?,
+    val location: String?,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    var startTime: LocalDateTime?,
+    val startTime: LocalDateTime?,
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    var endTime: LocalDateTime?,
-    var description: String?,
+    val endTime: LocalDateTime?,
+    val description: String?,
     @field:Min(2)
-    var teamSize: Int?,
-    var status: Boolean?,
+    val teamSize: Int?,
+    val status: Boolean?,
     @field:NotNull
-    var organizer: Long,
-    var coordinates: CoordinatesDto?,
+    val organizer: Long,
+    val coordinates: CoordinatesDto?,
 )

@@ -46,7 +46,6 @@ class GameController(
         }
     }
 
-    // TODO: List All active games within radius of lat long
     @GetMapping("/v1/games/nearby")
     fun getNearbyGames(
         @RequestParam lat: Double,

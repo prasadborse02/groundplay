@@ -7,26 +7,27 @@ import org.jetbrains.annotations.NotNull
 import java.time.LocalDateTime
 
 data class GameDto(
-    var id: Long?,
+    val id: Long?,
     @field:NotNull
-    var sport: Sport,
-    var location: String?,
-    @field:NotNull
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    var startTime: LocalDateTime,
+    val sport: Sport,
+    val location: String?,
     @field:NotNull
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
-    var endTime: LocalDateTime,
-    var description: String?,
+    val startTime: LocalDateTime,
+    @field:NotNull
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    val endTime: LocalDateTime,
+    val description: String?,
     @field:NotNull
     @field:Min(2)
-    var teamSize: Int,
+    val teamSize: Int,
+    val enrolledPlayers: Int,
     @field:NotNull
-    var status: Boolean,
+    val status: Boolean,
     @field:NotNull
-    var organizer: Long,
+    val organizer: Long,
     @field:NotNull
-    var coordinates: CoordinatesDto,
+    val coordinates: CoordinatesDto,
 )
 
 data class CoordinatesDto(
