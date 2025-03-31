@@ -28,6 +28,8 @@ interface GameRepository : JpaRepository<GameEntity, Long?> {
         @Param("coordinate") coordinate: Point,
     ): List<GameEntity>
 
+    fun findGameById(id: Long): GameEntity
+
     @Query(
         """
         SELECT *

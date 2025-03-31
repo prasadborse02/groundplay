@@ -20,7 +20,15 @@ class GameMemberServiceImpl(
         check(!gameMemberRepository.existsByGameIdAndPlayerId(gameMemberEntity.gameId, gameMemberEntity.playerId)) {
             "Player Already Registered for the game !!!"
         }
-        // TODO: Add validation same player can't register for multiple games at same time
-        return gameMemberRepository.save(gameMemberEntity)
+        val gameDetails = gameRepository.findGameById(gameMemberEntity.gameId)
+        check(gameDetails.enrolledPlayers < gameDetails.teamSize)
+        check(gameMemberRepository.isPlayerAvailable(gameDetails.startTime, gameDetails.endTime, gameMemberEntity.playerId)) { "A player must be available within the duration !!" }
+        val gameMembersResponse = gameMemberRepository.save(gameMemberEntity)
+        val updatedGameDetails = gameDetails.copy(
+            enrolledPlayers = gameDetails.enrolledPlayers + 1
+        )
+        if(gameMemberEntity.status)
+            gameRepository.save(updatedGameDetails)
+        return gameMembersResponse
     }
 }

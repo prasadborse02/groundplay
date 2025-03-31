@@ -29,10 +29,11 @@ class GameMemberController(
     ): ResponseEntity<GameMemberDto> =
         try {
             val savedEntry = gameMemberService.create(gameMemberDto.toGameMemberEntity())
-            // TODO: Update the count of registredPlayers
             ResponseEntity(savedEntry.toGameMemberDto(), HttpStatus.CREATED)
         } catch (e: IllegalArgumentException) {
             logger.error("Error registering player for a game: ", e)
             ResponseEntity(HttpStatus.CONFLICT)
         }
+
+    // TODO: Endpoint to unroll player
 }

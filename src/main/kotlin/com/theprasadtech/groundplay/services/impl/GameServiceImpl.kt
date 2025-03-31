@@ -72,6 +72,8 @@ class GameServiceImpl(
             check(it <= 50) { "Team size cannot exceed 50 players" }
         }
 
+        // TODO: Deregister player if player is not available within timeDuration
+
         val updatedGame =
             existingGame.copy(
                 id = id,
