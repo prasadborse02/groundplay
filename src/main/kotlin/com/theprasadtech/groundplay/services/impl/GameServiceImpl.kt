@@ -29,6 +29,7 @@ class GameServiceImpl(
         check(gameEntity.startTime.isBefore(gameEntity.endTime)) { "Start time must be before end time" }
         check(Duration.between(gameEntity.startTime, gameEntity.endTime).toHours() <= 24) { "Game duration cannot exceed 24 hours" }
         check(gameEntity.startTime.isAfter(LocalDateTime.now())) { "Game must be scheduled for the future" }
+        check(gameEntity.teamSize <= 100) { "Team size cannot exceed 50 players" }
         val conflicts = gameRepository.findConflictingGames(gameEntity.startTime, gameEntity.endTime, gameEntity.coordinates)
 
         if (conflicts.isNotEmpty()) {
@@ -69,10 +70,12 @@ class GameServiceImpl(
         check(finalStartTime.isAfter(LocalDateTime.now())) { "Game must be scheduled for the future" }
 
         gameUpdateRequest.teamSize?.let {
-            check(it <= 50) { "Team size cannot exceed 50 players" }
+            check(it <= 100) { "Team size cannot exceed 50 players" }
         }
-
-        // TODO: Deregister player if player is not available within timeDuration
+        check(gameRepository.findConflictingPlayerIds(id, finalStartTime, finalEndTime).isEmpty()) {
+            "Few Players are not availble for updated time"
+        }
+        // TODO : If conflicting player return the names in error
 
         val updatedGame =
             existingGame.copy(

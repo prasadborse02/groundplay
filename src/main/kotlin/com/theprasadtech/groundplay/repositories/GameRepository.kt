@@ -14,6 +14,7 @@ interface GameRepository : JpaRepository<GameEntity, Long?> {
         """
         SELECT * FROM games g
         WHERE g.coordinates = :coordinate
+        AND g.status = true
         AND (
             (:newGameStartTime >= g.start_time AND :newGameStartTime < g.end_time) 
             OR (:newGameEndTime > g.start_time AND :newGameEndTime <= g.end_time) 
@@ -38,7 +39,9 @@ interface GameRepository : JpaRepository<GameEntity, Long?> {
             g.coordinates, 
             ST_SetSRID(ST_MakePoint(:lat, :lon), 4326), 
             :radius
-        ) AND g.status = true
+        ) 
+        AND g.status = true
+        AND g.start_time > CURRENT_TIMESTAMP
         ORDER BY ST_Distance(
             g.coordinates, 
             ST_SetSRID(ST_MakePoint(:lat, :lon), 4326)
@@ -51,4 +54,36 @@ interface GameRepository : JpaRepository<GameEntity, Long?> {
         @Param("lon") lon: Double,
         @Param("radius") radius: Double,
     ): List<GameEntity>
+
+    @Query(
+        """
+        SELECT gm.player_id
+        FROM game_members gm
+        JOIN games gA ON gm.game_id = gA.id
+        JOIN games gB ON gm.player_id IN (
+            SELECT player_id FROM game_members WHERE game_id = gB.id
+        )
+        WHERE gA.id = :gameId
+        AND gB.id != :gameId
+        AND gB.status = true
+        AND gm.status = true
+        AND (
+            (:newStartTime > gB.start_time AND :newStartTime < gB.end_time) 
+            OR 
+            (:newEndTime > gB.start_time AND :newEndTime < gB.end_time)
+            OR 
+            (gB.start_time >= :newStartTime AND gB.start_time < :newEndTime)
+            OR 
+            (gB.end_time > :newStartTime AND gB.end_time <= :newEndTime)
+            OR
+            (:newStartTime < gB.start_time AND :newEndTime > gB.end_time)
+        )
+        """,
+        nativeQuery = true,
+    )
+    fun findConflictingPlayerIds(
+        @Param("gameId") gameId: Long,
+        @Param("newStartTime") newStartTime: LocalDateTime,
+        @Param("newEndTime") newEndTime: LocalDateTime,
+    ): List<Long>
 }

@@ -20,6 +20,7 @@ interface GameMemberRepository : JpaRepository<GameMemberEntity, Long?> {
         FROM games g
         JOIN game_members gm ON g.id = gm.game_id
         WHERE gm.player_id = :playerId
+        AND gm.status = true
         AND (
             (:startTime > g.start_time AND :startTime < g.end_time) 
             OR 
@@ -32,13 +33,18 @@ interface GameMemberRepository : JpaRepository<GameMemberEntity, Long?> {
             (:startTime < g.start_time AND :endTime > g.end_time)
         )
         """,
-        nativeQuery = true
+        nativeQuery = true,
     )
     fun isPlayerAvailable(
         @Param("startTime") newGameStartTime: LocalDateTime,
         @Param("endTime") newGameEndTime: LocalDateTime,
-        @Param("playerId") playerId: Long
+        @Param("playerId") playerId: Long,
     ): Boolean
 
     fun findByGameId(gameId: Long): List<GameMemberEntity>
+
+    fun findByGameIdAndPlayerId(
+        gameId: Long,
+        playerId: Long,
+    ): GameMemberEntity
 }

@@ -34,6 +34,4 @@ class GameMemberController(
             logger.error("Error registering player for a game: ", e)
             ResponseEntity(HttpStatus.CONFLICT)
         }
-
-    // TODO: Endpoint to unroll player
 }

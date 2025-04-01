@@ -6,6 +6,7 @@ import com.theprasadtech.groundplay.repositories.GameRepository
 import com.theprasadtech.groundplay.repositories.PlayerRepository
 import com.theprasadtech.groundplay.services.GameMemberService
 import org.springframework.stereotype.Service
+import java.time.LocalDateTime
 
 @Service
 class GameMemberServiceImpl(
@@ -17,18 +18,21 @@ class GameMemberServiceImpl(
         require(null == gameMemberEntity.id)
         check(gameRepository.existsById(gameMemberEntity.gameId)) { "Game does not exist !!!" }
         check(playerRepository.existsById(gameMemberEntity.playerId)) { "Player does not exists !!!" }
-        check(!gameMemberRepository.existsByGameIdAndPlayerId(gameMemberEntity.gameId, gameMemberEntity.playerId)) {
-            "Player Already Registered for the game !!!"
-        }
         val gameDetails = gameRepository.findGameById(gameMemberEntity.gameId)
-        check(gameDetails.enrolledPlayers < gameDetails.teamSize)
-        check(gameMemberRepository.isPlayerAvailable(gameDetails.startTime, gameDetails.endTime, gameMemberEntity.playerId)) { "A player must be available within the duration !!" }
-        val gameMembersResponse = gameMemberRepository.save(gameMemberEntity)
-        val updatedGameDetails = gameDetails.copy(
-            enrolledPlayers = gameDetails.enrolledPlayers + 1
-        )
-        if(gameMemberEntity.status)
-            gameRepository.save(updatedGameDetails)
-        return gameMembersResponse
+        check(gameDetails.startTime.isAfter(LocalDateTime.now()))
+        check(gameDetails.enrolledPlayers < gameDetails.teamSize) { "Game is already full !" }
+        if (gameMemberRepository.existsByGameIdAndPlayerId(gameMemberEntity.gameId, gameMemberEntity.playerId)) {
+            val existingEntity = gameMemberRepository.findByGameIdAndPlayerId(gameMemberEntity.gameId, gameMemberEntity.playerId)
+            val updatedEntity =
+                existingEntity.copy(
+                    status = gameMemberEntity.status,
+                )
+            return gameMemberRepository.save(updatedEntity)
+        } else {
+            check(gameMemberRepository.isPlayerAvailable(gameDetails.startTime, gameDetails.endTime, gameMemberEntity.playerId)) {
+                "A player must be available within the duration !!"
+            }
+            return gameMemberRepository.save(gameMemberEntity)
+        }
     }
 }
