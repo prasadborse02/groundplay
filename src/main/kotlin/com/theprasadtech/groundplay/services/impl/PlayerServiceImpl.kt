@@ -62,7 +62,10 @@ class PlayerServiceImpl(
         return savedPlayer
     }
 
-    override fun getPlayersByGameId(id: Long): List<PlayerEntity> {
+    override fun getPlayersByGameId(
+        id: Long,
+        status: String,
+    ): List<PlayerEntity> {
         log.info("Fetching players for game with ID: $id")
 
         if (!gameRepository.existsById(id)) {
@@ -70,8 +73,14 @@ class PlayerServiceImpl(
             throw ResourceNotFoundException("Game", id)
         }
 
-        val gameMembers = gameMemberRepository.findByGameId(id)
-        log.debug("Found ${gameMembers.size} game members for game ID: $id")
+        val gameMembers =
+            if (status.lowercase() == "active") {
+                gameMemberRepository.findByGameIdAndStatus(id, true)
+            } else {
+                gameMemberRepository.findByGameIdAndStatus(id, false)
+            }
+
+        log.debug("Found $status ${gameMembers.size} game members for game ID: $id")
 
         val playerIds = gameMembers.map { it.playerId }
         log.debug("Retrieved ${playerIds.size} player IDs from game members")

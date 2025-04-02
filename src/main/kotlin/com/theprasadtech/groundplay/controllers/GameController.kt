@@ -13,21 +13,22 @@ import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RequestParam
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping("/v1")
 class GameController(
     private val gameService: GameService,
 ) {
     private val log = logger()
 
     @PostMapping(
-        path = ["/v1/game"],
+        path = ["/game"],
         consumes = [MediaType.APPLICATION_JSON_VALUE],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
@@ -42,7 +43,7 @@ class GameController(
         return ResponseEntity(savedGame.toGameDto(), HttpStatus.CREATED)
     }
 
-    @GetMapping("/v1/games/nearby")
+    @GetMapping("/games/nearby")
     fun getNearbyGames(
         @RequestParam lat: Double,
         @RequestParam lon: Double,
@@ -57,7 +58,7 @@ class GameController(
     }
 
     @GetMapping(
-        path = ["/v1/gameDetails/{id}"],
+        path = ["/gameDetails/{id}"],
     )
     fun getGameDetails(
         @PathVariable id: Long,
@@ -70,8 +71,8 @@ class GameController(
         return ResponseEntity(game.toGameDto(), HttpStatus.OK)
     }
 
-    @PatchMapping(
-        path = ["/v1/updateGame/{id}"],
+    @PostMapping(
+        path = ["/updateGame/{id}"],
     )
     fun updateGameDetails(
         @PathVariable id: Long,

@@ -11,19 +11,20 @@ import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping("/v1")
 class PlayerController(
     private val playerService: PlayerService,
 ) {
     private val log = logger()
 
-    @PostMapping(path = ["/v1/player"])
+    @PostMapping(path = ["/player"])
     fun createPlayer(
         @Valid @RequestBody playerDto: PlayerDto,
     ): ResponseEntity<PlayerDto> {
@@ -35,7 +36,7 @@ class PlayerController(
         return ResponseEntity(savedPlayer.toPlayerDto(), HttpStatus.CREATED)
     }
 
-    @PatchMapping(path = ["/v1/updatePlayerName/{id}"])
+    @PostMapping(path = ["/updatePlayerName/{id}"])
     fun updatePlayerDetails(
         @PathVariable id: Long,
         @RequestBody playerUpdateRequestDto: PlayerUpdateRequestDto,
@@ -48,13 +49,14 @@ class PlayerController(
         return ResponseEntity(updatedPlayer.toPlayerDto(), HttpStatus.OK)
     }
 
-    @GetMapping("/v1/{id}/players")
+    @GetMapping("/{id}/players/{status}")
     fun getPlayersByGameId(
         @PathVariable id: Long,
+        @PathVariable status: String,
     ): ResponseEntity<List<PlayerDto>> {
         log.info("Fetching players for game with ID: $id")
 
-        val players = playerService.getPlayersByGameId(id).map { it.toPlayerDto() }
+        val players = playerService.getPlayersByGameId(id, status).map { it.toPlayerDto() }
         log.info("Retrieved ${players.size} players for game with ID: $id")
 
         return ResponseEntity(players, HttpStatus.OK)
