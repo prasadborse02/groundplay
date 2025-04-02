@@ -3,35 +3,51 @@ package com.theprasadtech.groundplay.controllers
 import com.theprasadtech.groundplay.domain.dto.GameMemberDto
 import com.theprasadtech.groundplay.services.GameMemberService
 import com.theprasadtech.groundplay.toGameMemberDto
-import com.theprasadtech.groundplay.toGameMemberEntity
 import com.theprasadtech.groundplay.utils.logger
-import jakarta.validation.Valid
 import org.springframework.http.HttpStatus
 import org.springframework.http.MediaType
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
+@RequestMapping("/v1")
 class GameMemberController(
     private val gameMemberService: GameMemberService,
 ) {
-    private val logger = logger()
+    private val log = logger()
 
     @PostMapping(
-        path = ["/v1/register"],
-        consumes = [MediaType.APPLICATION_JSON_VALUE],
+        path = ["/games/{gameId}/enroll/{playerId}"],
         produces = [MediaType.APPLICATION_JSON_VALUE],
     )
-    fun registerPlayerForGame(
-        @Valid @RequestBody gameMemberDto: GameMemberDto,
-    ): ResponseEntity<GameMemberDto> =
-        try {
-            val savedEntry = gameMemberService.create(gameMemberDto.toGameMemberEntity())
-            ResponseEntity(savedEntry.toGameMemberDto(), HttpStatus.CREATED)
-        } catch (e: IllegalArgumentException) {
-            logger.error("Error registering player for a game: ", e)
-            ResponseEntity(HttpStatus.CONFLICT)
-        }
+    fun enrollPlayer(
+        @PathVariable gameId: Long,
+        @PathVariable playerId: Long,
+    ): ResponseEntity<GameMemberDto> {
+        log.info("Enrolling player $playerId in game $gameId")
+
+        val savedEntry = gameMemberService.enrollPlayer(gameId, playerId)
+        log.info("Successfully enrolled player ${savedEntry.playerId} in game ${savedEntry.gameId}")
+
+        return ResponseEntity(savedEntry.toGameMemberDto(), HttpStatus.CREATED)
+    }
+
+    @PostMapping(
+        path = ["/games/{gameId}/unenroll/{playerId}"],
+        produces = [MediaType.APPLICATION_JSON_VALUE],
+    )
+    fun unenrollPlayer(
+        @PathVariable gameId: Long,
+        @PathVariable playerId: Long,
+    ): ResponseEntity<GameMemberDto> {
+        log.info("Unenrolling player $playerId from game $gameId")
+
+        val updatedEntry = gameMemberService.unenrollPlayer(gameId, playerId)
+        log.info("Successfully unenrolled player $playerId from game $gameId")
+
+        return ResponseEntity(updatedEntry.toGameMemberDto(), HttpStatus.OK)
+    }
 }
