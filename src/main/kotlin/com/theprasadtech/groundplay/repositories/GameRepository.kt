@@ -31,20 +31,22 @@ interface GameRepository : JpaRepository<GameEntity, Long?> {
 
     fun findGameById(id: Long): GameEntity
 
+    fun findGamesByOrganizer(organizer: Long): List<GameEntity>
+
     @Query(
         """
         SELECT *
         FROM games g
         WHERE ST_DWithin(
             g.coordinates, 
-            ST_SetSRID(ST_MakePoint(:lat, :lon), 4326), 
+            ST_SetSRID(ST_MakePoint(:lon, :lat), 4326), 
             :radius
         ) 
         AND g.status = true
         AND g.start_time > CURRENT_TIMESTAMP
         ORDER BY ST_Distance(
             g.coordinates, 
-            ST_SetSRID(ST_MakePoint(:lat, :lon), 4326)
+            ST_SetSRID(ST_MakePoint(:lon, :lat), 4326)
         )
         """,
         nativeQuery = true,

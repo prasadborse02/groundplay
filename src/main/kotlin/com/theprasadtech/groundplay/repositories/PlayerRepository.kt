@@ -6,7 +6,7 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface PlayerRepository : JpaRepository<PlayerEntity, Long?> {
-    fun existsByPhone(phone: String): Boolean
+    fun existsByPhoneNumber(phoneNumber: String): Boolean
 
     fun findPlayerById(id: Long): PlayerEntity
 }

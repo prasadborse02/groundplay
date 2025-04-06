@@ -57,6 +57,18 @@ class GameController(
         return ResponseEntity(games, HttpStatus.OK)
     }
 
+    @GetMapping("/games/{id}")
+    fun getOrganizersGame(
+        @PathVariable id: Long,
+    ): ResponseEntity<List<GameDto>> {
+        log.info("Fetching games for the organizerId: $id")
+
+        val games = gameService.getByOrganizerId(id).map { it.toGameDto() }
+        log.info("Successfully fetched games for organizedId: $id")
+
+        return ResponseEntity(games, HttpStatus.OK)
+    }
+
     @GetMapping(
         path = ["/gameDetails/{id}"],
     )

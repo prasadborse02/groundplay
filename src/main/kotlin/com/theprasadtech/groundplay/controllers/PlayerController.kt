@@ -28,7 +28,7 @@ class PlayerController(
     fun createPlayer(
         @Valid @RequestBody playerDto: PlayerDto,
     ): ResponseEntity<PlayerDto> {
-        log.info("Received player creation request: name=${playerDto.name}, phone=${playerDto.phone}")
+        log.info("Received player creation request: name=${playerDto.name}, phoneNumber=${playerDto.phoneNumber}")
 
         val savedPlayer = playerService.save(playerDto.toPlayerEntity())
         log.info("Successfully created player with ID: ${savedPlayer.id}")

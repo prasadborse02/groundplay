@@ -56,45 +56,192 @@ spring.datasource.password=your_password
 ### Player API
 
 - `POST /v1/player` - Create a new player
-- `PATCH /v1/updatePlayerName/{id}` - Update player details
-- `GET /v1/{id}/players` - Get all players enrolled in a game
+- `POST /v1/updatePlayerName/{id}` - Update player name
+- `GET /v1/{id}/players/{status}` - Get players by game ID and status
 
 ### Game API
 
 - `POST /v1/game` - Create a new game
 - `GET /v1/games/nearby?lat={lat}&lon={lon}&radiusKm={radius}` - Find games near a location
 - `GET /v1/gameDetails/{id}` - Get game details
-- `PATCH /v1/updateGame/{id}` - Update game details
+- `POST /v1/updateGame/{id}` - Update game details
 
 ### Game Member API
 
-#### Legacy Endpoints
-- `POST /v1/register` - Enroll or unenroll a player in a game based on status field
-
-#### New RESTful Endpoints
-- `POST /v1/games/{gameId}/enroll` - Enroll a player in a game
-  ```json
-  {
-    "playerId": 123
-  }
-  ```
-- `PUT /v1/games/{gameId}/unenroll/{playerId}` - Unenroll a player from a game
+- `POST /v1/games/{gameId}/enroll/{playerId}` - Enroll a player in a game
+- `POST /v1/games/{gameId}/unenroll/{playerId}` - Unenroll a player from a game
 
 ## Request/Response Examples
 
-### Enrolling a Player
+### Player Registration
 
 **Request:**
 ```http
-POST /v1/games/5/enroll/10
+POST /v1/player
+Content-Type: application/json
+
+{
+  "name": "John Doe",
+  "phoneNumber": "+1234567890"
+}
 ```
 
 **Response:**
 ```json
 {
-  "id": 42,
-  "gameId": 5,
-  "playerId": 10,
+  "id": 1,
+  "name": "John Doe",
+  "phoneNumber": "+1234567890"
+}
+```
+
+### Update Player Name
+
+**Request:**
+```http
+POST /v1/updatePlayerName/1
+Content-Type: application/json
+
+{
+  "name": "John Smith"
+}
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "name": "John Smith",
+  "phoneNumber": "+1234567890"
+}
+```
+
+### Creating a Game
+
+**Request:**
+```http
+POST /v1/game
+Content-Type: application/json
+
+{
+  "sport": "CRICKET",
+  "location": "Central Park",
+  "startTime": "2025-04-01T14:00:00",
+  "endTime": "2025-04-01T16:00:00",
+  "description": "Friendly cricket match",
+  "teamSize": 11,
+  "status": true,
+  "organizer": 1,
+  "coordinates": {
+    "lat": 40.785091,
+    "lon": -73.968285
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "sport": "CRICKET",
+  "location": "Central Park",
+  "startTime": "2025-04-01T14:00:00",
+  "endTime": "2025-04-01T16:00:00",
+  "description": "Friendly cricket match",
+  "teamSize": 11,
+  "enrolledPlayers": 0,
+  "status": true,
+  "organizer": 1,
+  "coordinates": {
+    "lat": 40.785091,
+    "lon": -73.968285
+  }
+}
+```
+
+### Updating a Game
+
+**Request:**
+```http
+POST /v1/updateGame/1
+Content-Type: application/json
+
+{
+  "sport": "CRICKET",
+  "location": "Riverside Park",
+  "startTime": "2025-04-01T15:00:00",
+  "endTime": "2025-04-01T17:00:00",
+  "description": "Friendly cricket match - updated venue",
+  "teamSize": 11,
+  "status": true,
+  "organizer": 1,
+  "coordinates": {
+    "lat": 40.801979,
+    "lon": -73.972070
+  }
+}
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "sport": "CRICKET",
+  "location": "Riverside Park",
+  "startTime": "2025-04-01T15:00:00",
+  "endTime": "2025-04-01T17:00:00",
+  "description": "Friendly cricket match - updated venue",
+  "teamSize": 11,
+  "enrolledPlayers": 0,
+  "status": true,
+  "organizer": 1,
+  "coordinates": {
+    "lat": 40.801979,
+    "lon": -73.972070
+  }
+}
+```
+
+### Get Game Details
+
+**Request:**
+```http
+GET /v1/gameDetails/1
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "sport": "CRICKET",
+  "location": "Riverside Park",
+  "startTime": "2025-04-01T15:00:00",
+  "endTime": "2025-04-01T17:00:00",
+  "description": "Friendly cricket match - updated venue",
+  "teamSize": 11,
+  "enrolledPlayers": 0,
+  "status": true,
+  "organizer": 1,
+  "coordinates": {
+    "lat": 40.801979,
+    "lon": -73.972070
+  }
+}
+```
+
+### Enrolling a Player
+
+**Request:**
+```http
+POST /v1/games/1/enroll/1
+```
+
+**Response:**
+```json
+{
+  "id": 1,
+  "gameId": 1,
+  "playerId": 1,
   "status": true
 }
 ```
@@ -103,43 +250,82 @@ POST /v1/games/5/enroll/10
 
 **Request:**
 ```http
-POST /v1/games/5/unenroll/10
+POST /v1/games/1/unenroll/1
 ```
 
 **Response:**
 ```json
 {
-  "id": 42,
-  "gameId": 5,
-  "playerId": 10,
+  "id": 1,
+  "gameId": 1,
+  "playerId": 1,
   "status": false
 }
 ```
 
-### Finding Nearby Games
+### Getting Players by Game ID and Status
 
 **Request:**
 ```http
-GET /v1/games/nearby?lat=37.7749&lon=-122.4194&radiusKm=10
+GET /v1/1/players/true
 ```
 
 **Response:**
 ```json
 [
   {
-    "id": 5,
-    "sport": "SOCCER",
-    "location": "Golden Gate Park",
-    "startTime": "2025-03-15T14:00:00",
-    "endTime": "2025-03-15T16:00:00",
-    "description": "Casual soccer game",
-    "teamSize": 10,
-    "enrolledPlayers": 6,
+    "id": 1,
+    "name": "John Smith",
+    "phoneNumber": "+1234567890"
+  },
+  {
+    "id": 2,
+    "name": "Jane Doe",
+    "phoneNumber": "+9876543210"
+  }
+]
+```
+
+### Finding Nearby Games
+
+**Request:**
+```http
+GET /v1/games/nearby?lat=40.7128&lon=-74.0060&radiusKm=5
+```
+
+**Response:**
+```json
+[
+  {
+    "id": 1,
+    "sport": "CRICKET",
+    "location": "Riverside Park",
+    "startTime": "2025-04-01T15:00:00",
+    "endTime": "2025-04-01T17:00:00",
+    "description": "Friendly cricket match - updated venue",
+    "teamSize": 11,
+    "enrolledPlayers": 1,
     "status": true,
     "organizer": 1,
     "coordinates": {
-      "x": -122.4194,
-      "y": 37.7749
+      "lat": 40.801979,
+      "lon": -73.972070
+    }
+  },
+  {
+    "id": 2,
+    "sport": "FOOTBALL",
+    "location": "Battery Park",
+    "startTime": "2025-04-02T18:00:00",
+    "endTime": "2025-04-02T20:00:00",
+    "description": "After-work football game",
+    "teamSize": 7,
+    "enrolledPlayers": 4,
+    "status": true,
+    "organizer": 2,
+    "coordinates": {
+      "lat": 40.703137,
+      "lon": -74.016262
     }
   }
 ]

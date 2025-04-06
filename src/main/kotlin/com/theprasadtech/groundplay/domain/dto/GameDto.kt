@@ -31,6 +31,6 @@ data class GameDto(
 )
 
 data class CoordinatesDto(
-    val x: Double,
-    val y: Double,
+    val lat: Double,
+    val lon: Double,
 )

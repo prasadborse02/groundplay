@@ -99,6 +99,25 @@ class GameServiceImpl(
         return games
     }
 
+    override fun getByOrganizerId(id: Long): List<GameEntity> {
+        playerRepository.findByIdOrNull(id)
+            ?: throw ResourceNotFoundException("Player", id)
+
+        log.info("Searching for games with organizerId: $id")
+        val games = gameRepository.findGamesByOrganizer(id)
+        log.info("Found ${games.size} games for organizerId $id")
+
+        if(games.isEmpty()) {
+            log.debug("No games found for the organizerId")
+        } else {
+            games.forEach { game ->
+                log.debug("Found game for organizerId $id: id=${game.id}, sport=${game.sport}")
+            }
+        }
+
+        return games;
+    }
+
     @Transactional
     override fun updateGame(
         id: Long,
@@ -150,7 +169,7 @@ class GameServiceImpl(
     }
 
     override fun convertToPoint(coordinatesDto: CoordinatesDto): Point =
-        GeometryFactory().createPoint(Coordinate(coordinatesDto.x, coordinatesDto.y))
+        GeometryFactory().createPoint(Coordinate(coordinatesDto.lat, coordinatesDto.lon))
 
     // Helper validation methods
     private fun validateGameTime(

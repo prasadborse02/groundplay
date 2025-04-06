@@ -16,5 +16,5 @@ data class PlayerEntity(
     @Column(nullable = false)
     val name: String,
     @Column(nullable = false, unique = true)
-    val phone: String,
+    val phoneNumber: String,
 )

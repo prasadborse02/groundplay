@@ -24,16 +24,16 @@ class PlayerServiceImpl(
 
     @Transactional
     override fun save(playerEntity: PlayerEntity): PlayerEntity {
-        log.info("Creating new player: name=${playerEntity.name}, phone=${playerEntity.phone}")
+        log.info("Creating new player: name=${playerEntity.name}, phoneNumber=${playerEntity.phoneNumber}")
 
         if (playerEntity.id != null) {
             log.error("Cannot create player with predefined ID: ${playerEntity.id}")
             throw ValidationException("New player cannot have a predefined ID")
         }
 
-        if (playerRepository.existsByPhone(playerEntity.phone)) {
-            log.error("Cannot create player: phone number ${playerEntity.phone} already registered")
-            throw ResourceAlreadyExistsException("Player", "phone", playerEntity.phone)
+        if (playerRepository.existsByPhoneNumber(playerEntity.phoneNumber)) {
+            log.error("Cannot create player: phone number ${playerEntity.phoneNumber} already registered")
+            throw ResourceAlreadyExistsException("Player", "phoneNumber", playerEntity.phoneNumber)
         }
 
         val savedPlayer = playerRepository.save(playerEntity)
