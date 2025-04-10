@@ -13,8 +13,8 @@ class PointSerializer : JsonSerializer<Point>() {
     ) {
         if (gen != null && point != null) {
             gen.writeStartObject()
-            gen.writeNumberField("x", point.x)
-            gen.writeNumberField("y", point.y)
+            gen.writeNumberField("lat", point.x)
+            gen.writeNumberField("lon", point.y)
             gen.writeEndObject()
         }
     }

@@ -12,5 +12,5 @@ data class PlayerDto(
         regexp = "^\\+?[0-9]{7,15}$",
         message = "Invalid phone number format",
     )
-    val phone: String,
+    val phoneNumber: String,
 )

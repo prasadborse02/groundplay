@@ -41,7 +41,10 @@ interface GameMemberRepository : JpaRepository<GameMemberEntity, Long?> {
         @Param("playerId") playerId: Long,
     ): Boolean
 
-    fun findByGameId(gameId: Long): List<GameMemberEntity>
+    fun findByGameIdAndStatus(
+        gameId: Long,
+        status: Boolean,
+    ): List<GameMemberEntity>
 
     fun findByGameIdAndPlayerId(
         gameId: Long,

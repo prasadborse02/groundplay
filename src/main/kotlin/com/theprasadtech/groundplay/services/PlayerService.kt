@@ -11,5 +11,8 @@ interface PlayerService {
         playerUpdateRequest: PlayerUpdateRequest,
     ): PlayerEntity
 
-    fun getPlayersByGameId(id: Long): List<PlayerEntity>
+    fun getPlayersByGameId(
+        id: Long,
+        status: String,
+    ): List<PlayerEntity>
 }
