@@ -107,7 +107,7 @@ class GameServiceImpl(
         val games = gameRepository.findGamesByOrganizer(id)
         log.info("Found ${games.size} games for organizerId $id")
 
-        if(games.isEmpty()) {
+        if (games.isEmpty()) {
             log.debug("No games found for the organizerId")
         } else {
             games.forEach { game ->
@@ -115,7 +115,7 @@ class GameServiceImpl(
             }
         }
 
-        return games;
+        return games
     }
 
     @Transactional

@@ -1,5 +1,6 @@
 package com.theprasadtech.groundplay.domain.dto
 
+import jakarta.validation.constraints.Email
 import jakarta.validation.constraints.Pattern
 import org.jetbrains.annotations.NotNull
 
@@ -13,4 +14,6 @@ data class PlayerDto(
         message = "Invalid phone number format",
     )
     val phoneNumber: String,
+    @field:Email(message = "Invalid email format")
+    val email: String? = null,
 )

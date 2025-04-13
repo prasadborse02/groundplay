@@ -109,6 +109,48 @@ class GameMemberServiceImpl(
         }
     }
 
+    override fun getPlayerEnrollments(
+        playerId: Long,
+        activeOnly: Boolean,
+    ): List<GameMemberEntity> {
+        log.info("Getting enrollments for player $playerId, activeOnly=$activeOnly")
+
+        // Validate player exists
+        if (!playerRepository.existsById(playerId)) {
+            log.error("Player with ID $playerId not found")
+            throw ResourceNotFoundException("Player", playerId)
+        }
+
+        return if (activeOnly) {
+            gameMemberRepository.findByPlayerIdAndStatus(playerId, true)
+        } else {
+            gameMemberRepository.findByPlayerId(playerId)
+        }
+    }
+
+    // Implementation of isGameOrganizer method
+    override fun isGameOrganizer(
+        gameId: Long,
+        playerId: Long,
+    ): Boolean {
+        log.debug("Checking if player $playerId is the organizer of game $gameId")
+
+        val game = gameRepository.findById(gameId)
+
+        if (game.isEmpty) {
+            log.debug("Game not found with ID: $gameId")
+            return false
+        }
+
+        val isOrganizer = game.get().organizer == playerId
+
+        if (!isOrganizer) {
+            log.debug("Player $playerId is not the organizer of game $gameId")
+        }
+
+        return isOrganizer
+    }
+
     // Helper methods
     private fun validateGameAndPlayerExist(
         gameId: Long,

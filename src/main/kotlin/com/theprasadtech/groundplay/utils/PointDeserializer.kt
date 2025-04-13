@@ -16,6 +16,6 @@ class PointDeserializer : JsonDeserializer<Point>() {
         val node: JsonNode = p.codec.readTree(p)
         val lat = node.get("lat").asDouble()
         val lon = node.get("lon").asDouble()
-        return GeometryFactory().createPoint(Coordinate(lat, lon))
+        return GeometryFactory().createPoint(Coordinate(lon, lat))
     }
 }

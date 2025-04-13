@@ -50,7 +50,7 @@ fun GameDto.toGameEntity() =
         organizer = this.organizer,
         coordinates =
             geometryFactory.createPoint(
-                Coordinate(this.coordinates.lat, this.coordinates.lon),
+                Coordinate(this.coordinates.lon, this.coordinates.lat),
             ),
     )
 
@@ -88,13 +88,7 @@ fun PlayerEntity.toPlayerDto() =
         id = this.id,
         name = this.name,
         phoneNumber = this.phoneNumber,
-    )
-
-fun PlayerDto.toPlayerEntity() =
-    PlayerEntity(
-        id = this.id,
-        name = this.name,
-        phoneNumber = this.phoneNumber,
+        email = this.email,
     )
 
 fun PlayerUpdateRequestDto.toPlayerUpdateRequest() =

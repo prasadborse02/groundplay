@@ -16,9 +16,7 @@ interface GameService {
         radiusInKm: Double,
     ): List<GameEntity>
 
-    fun getByOrganizerId(
-        id: Long,
-    ): List<GameEntity>
+    fun getByOrganizerId(id: Long): List<GameEntity>
 
     fun updateGame(
         id: Long,

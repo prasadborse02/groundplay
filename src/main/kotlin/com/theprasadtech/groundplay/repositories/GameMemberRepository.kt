@@ -50,4 +50,11 @@ interface GameMemberRepository : JpaRepository<GameMemberEntity, Long?> {
         gameId: Long,
         playerId: Long,
     ): GameMemberEntity
+
+    fun findByPlayerIdAndStatus(
+        playerId: Long,
+        status: Boolean,
+    ): List<GameMemberEntity>
+
+    fun findByPlayerId(playerId: Long): List<GameMemberEntity>
 }

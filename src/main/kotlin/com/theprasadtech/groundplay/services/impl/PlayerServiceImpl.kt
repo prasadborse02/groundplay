@@ -2,9 +2,7 @@ package com.theprasadtech.groundplay.services.impl
 
 import com.theprasadtech.groundplay.domain.PlayerUpdateRequest
 import com.theprasadtech.groundplay.domain.entities.PlayerEntity
-import com.theprasadtech.groundplay.exceptions.ResourceAlreadyExistsException
 import com.theprasadtech.groundplay.exceptions.ResourceNotFoundException
-import com.theprasadtech.groundplay.exceptions.ValidationException
 import com.theprasadtech.groundplay.repositories.GameMemberRepository
 import com.theprasadtech.groundplay.repositories.GameRepository
 import com.theprasadtech.groundplay.repositories.PlayerRepository
@@ -21,25 +19,6 @@ class PlayerServiceImpl(
     private val playerRepository: PlayerRepository,
 ) : PlayerService {
     private val log = logger()
-
-    @Transactional
-    override fun save(playerEntity: PlayerEntity): PlayerEntity {
-        log.info("Creating new player: name=${playerEntity.name}, phoneNumber=${playerEntity.phoneNumber}")
-
-        if (playerEntity.id != null) {
-            log.error("Cannot create player with predefined ID: ${playerEntity.id}")
-            throw ValidationException("New player cannot have a predefined ID")
-        }
-
-        if (playerRepository.existsByPhoneNumber(playerEntity.phoneNumber)) {
-            log.error("Cannot create player: phone number ${playerEntity.phoneNumber} already registered")
-            throw ResourceAlreadyExistsException("Player", "phoneNumber", playerEntity.phoneNumber)
-        }
-
-        val savedPlayer = playerRepository.save(playerEntity)
-        log.info("Successfully created player with ID: ${savedPlayer.id}")
-        return savedPlayer
-    }
 
     @Transactional
     override fun updatePlayer(
@@ -60,6 +39,19 @@ class PlayerServiceImpl(
         val savedPlayer = playerRepository.save(updatedPlayer)
         log.info("Successfully updated player with ID: $id")
         return savedPlayer
+    }
+
+    override fun getById(id: Long): PlayerEntity? {
+        log.info("Fetching player with ID: $id")
+        val player = playerRepository.findByIdOrNull(id)
+
+        if (player == null) {
+            log.debug("Player with ID $id not found")
+        } else {
+            log.debug("Successfully fetched player with ID: $id")
+        }
+
+        return player
     }
 
     override fun getPlayersByGameId(
@@ -85,7 +77,7 @@ class PlayerServiceImpl(
         val playerIds = gameMembers.map { it.playerId }
         log.debug("Retrieved ${playerIds.size} player IDs from game members")
 
-        // More efficient approach using a single query
+        // TODO: More efficient approach using a single query
         val players = playerRepository.findAllById(playerIds)
 
         log.info("Successfully retrieved ${players.size} players for game ID: $id")
