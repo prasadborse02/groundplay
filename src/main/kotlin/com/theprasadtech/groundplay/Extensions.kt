@@ -31,8 +31,8 @@ fun GameEntity.toGameDto() =
         organizer = this.organizer,
         coordinates =
             CoordinatesDto(
-                lat = this.coordinates.x,
-                lon = this.coordinates.y,
+                lat = this.coordinates.y,
+                lon = this.coordinates.x,
             ),
     )
 
