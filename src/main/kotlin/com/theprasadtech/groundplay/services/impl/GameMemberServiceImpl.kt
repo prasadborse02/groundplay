@@ -1,5 +1,6 @@
 package com.theprasadtech.groundplay.services.impl
 
+import com.theprasadtech.groundplay.domain.entities.GameEntity
 import com.theprasadtech.groundplay.domain.entities.GameMemberEntity
 import com.theprasadtech.groundplay.exceptions.GameFullException
 import com.theprasadtech.groundplay.exceptions.PlayerNotAvailableException
@@ -125,6 +126,33 @@ class GameMemberServiceImpl(
             gameMemberRepository.findByPlayerIdAndStatus(playerId, true)
         } else {
             gameMemberRepository.findByPlayerId(playerId)
+        }
+    }
+
+    override fun getPlayerEnrolledGames(
+        playerId: Long,
+        activeOnly: Boolean,
+    ): List<GameEntity> {
+        log.info("Getting enrolled games for player $playerId, activeOnly=$activeOnly")
+
+        if (!playerRepository.existsById(playerId)) {
+            log.error("Player with ID $playerId not found")
+            throw ResourceNotFoundException("Player", playerId)
+        }
+
+        val enrollments = if (activeOnly) {
+            gameMemberRepository.findByPlayerIdAndStatus(playerId, true)
+        } else {
+            gameMemberRepository.findByPlayerId(playerId)
+        }
+
+        return enrollments.mapNotNull { enrollment ->
+            try {
+                gameRepository.findGameById(enrollment.gameId)
+            } catch (e: Exception) {
+                log.error("Error finding game with ID ${enrollment.gameId}: ${e.message}")
+                null
+            }
         }
     }
 

@@ -1,8 +1,10 @@
 package com.theprasadtech.groundplay.controllers
 
+import com.theprasadtech.groundplay.domain.dto.GameDto
 import com.theprasadtech.groundplay.domain.dto.GameMemberDto
 import com.theprasadtech.groundplay.security.SecurityUtil
 import com.theprasadtech.groundplay.services.GameMemberService
+import com.theprasadtech.groundplay.toGameDto
 import com.theprasadtech.groundplay.toGameMemberDto
 import com.theprasadtech.groundplay.utils.logger
 import org.springframework.http.HttpStatus
@@ -68,14 +70,14 @@ class GameMemberController(
     fun getMyEnrolledGames(
         authentication: Authentication,
         @RequestParam(required = false, defaultValue = "true") activeOnly: Boolean,
-    ): ResponseEntity<List<GameMemberDto>> {
+    ): ResponseEntity<List<GameDto>> {
         val playerId = authentication.principal as Long
         log.info("Fetching enrolled games for player $playerId, activeOnly=$activeOnly")
 
-        val enrollments = gameMemberService.getPlayerEnrollments(playerId, activeOnly)
-        log.info("Found ${enrollments.size} enrolled games for player $playerId")
+        val games = gameMemberService.getPlayerEnrolledGames(playerId, activeOnly)
+        log.info("Found ${games.size} enrolled games for player $playerId")
 
-        return ResponseEntity.ok(enrollments.map { it.toGameMemberDto() })
+        return ResponseEntity.ok(games.map { it.toGameDto() })
     }
 
     @GetMapping("/players/{playerId}/enrollments")
