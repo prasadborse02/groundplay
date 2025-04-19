@@ -169,7 +169,7 @@ class GameServiceImpl(
     }
 
     override fun convertToPoint(coordinatesDto: CoordinatesDto): Point =
-        GeometryFactory().createPoint(Coordinate(coordinatesDto.lat, coordinatesDto.lon))
+        GeometryFactory().createPoint(Coordinate(coordinatesDto.lon, coordinatesDto.lat))
 
     // Helper validation methods
     private fun validateGameTime(
