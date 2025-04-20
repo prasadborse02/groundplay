@@ -2,7 +2,6 @@ package com.theprasadtech.groundplay.controllers
 
 import com.theprasadtech.groundplay.domain.dto.GameDto
 import com.theprasadtech.groundplay.domain.dto.GameMemberDto
-import com.theprasadtech.groundplay.security.SecurityUtil
 import com.theprasadtech.groundplay.services.GameMemberService
 import com.theprasadtech.groundplay.toGameDto
 import com.theprasadtech.groundplay.toGameMemberDto

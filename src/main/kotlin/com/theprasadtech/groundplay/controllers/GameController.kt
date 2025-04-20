@@ -3,7 +3,6 @@ package com.theprasadtech.groundplay.controllers
 import com.theprasadtech.groundplay.domain.dto.GameDto
 import com.theprasadtech.groundplay.domain.dto.GameUpdateRequestDto
 import com.theprasadtech.groundplay.exceptions.ResourceNotFoundException
-import com.theprasadtech.groundplay.security.SecurityUtil
 import com.theprasadtech.groundplay.services.GameService
 import com.theprasadtech.groundplay.toGameDto
 import com.theprasadtech.groundplay.toGameEntity

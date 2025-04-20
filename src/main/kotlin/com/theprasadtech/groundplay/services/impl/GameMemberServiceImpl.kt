@@ -140,11 +140,12 @@ class GameMemberServiceImpl(
             throw ResourceNotFoundException("Player", playerId)
         }
 
-        val enrollments = if (activeOnly) {
-            gameMemberRepository.findByPlayerIdAndStatus(playerId, true)
-        } else {
-            gameMemberRepository.findByPlayerId(playerId)
-        }
+        val enrollments =
+            if (activeOnly) {
+                gameMemberRepository.findByPlayerIdAndStatus(playerId, true)
+            } else {
+                gameMemberRepository.findByPlayerId(playerId)
+            }
 
         return enrollments.mapNotNull { enrollment ->
             try {
