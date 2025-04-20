@@ -4,9 +4,13 @@ import com.theprasadtech.groundplay.utils.logger
 import jakarta.validation.ConstraintViolationException
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.security.access.AccessDeniedException
+import org.springframework.security.authentication.BadCredentialsException
+import org.springframework.security.core.AuthenticationException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import org.springframework.web.context.request.WebRequest
 import java.time.LocalDateTime
 
 @RestControllerAdvice
@@ -75,6 +79,57 @@ class GlobalExceptionHandler {
             )
 
         return ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST)
+    }
+
+    @ExceptionHandler(AuthenticationException::class)
+    fun handleAuthenticationException(
+        ex: AuthenticationException,
+        request: WebRequest,
+    ): ResponseEntity<ErrorResponse> {
+        log.error("Authentication error: ${ex.message}", ex)
+
+        val errorResponse =
+            ErrorResponse(
+                status = HttpStatus.UNAUTHORIZED.value(),
+                error = HttpStatus.UNAUTHORIZED.reasonPhrase,
+                code = "AUTHENTICATION_ERROR",
+                message = ex.message ?: "Authentication failed",
+            )
+
+        return ResponseEntity(errorResponse, HttpStatus.UNAUTHORIZED)
+    }
+
+    @ExceptionHandler(AccessDeniedException::class)
+    fun handleAccessDeniedException(
+        ex: AccessDeniedException,
+        request: WebRequest,
+    ): ResponseEntity<ErrorResponse> {
+        log.error("Access denied: ${ex.message}", ex)
+
+        val errorResponse =
+            ErrorResponse(
+                status = HttpStatus.FORBIDDEN.value(),
+                error = HttpStatus.FORBIDDEN.reasonPhrase,
+                code = "ACCESS_DENIED",
+                message = ex.message ?: "You don't have permission to access this resource",
+            )
+
+        return ResponseEntity(errorResponse, HttpStatus.FORBIDDEN)
+    }
+
+    @ExceptionHandler(BadCredentialsException::class)
+    fun handleBadCredentialsException(ex: BadCredentialsException): ResponseEntity<ErrorResponse> {
+        log.error("Bad credentials: ${ex.message}", ex)
+
+        val errorResponse =
+            ErrorResponse(
+                status = HttpStatus.UNAUTHORIZED.value(),
+                error = HttpStatus.UNAUTHORIZED.reasonPhrase,
+                code = "INVALID_CREDENTIALS",
+                message = "Invalid username or password",
+            )
+
+        return ResponseEntity(errorResponse, HttpStatus.UNAUTHORIZED)
     }
 
     @ExceptionHandler(Exception::class)

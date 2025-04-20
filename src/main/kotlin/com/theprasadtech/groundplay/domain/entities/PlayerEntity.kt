@@ -17,4 +17,10 @@ data class PlayerEntity(
     val name: String,
     @Column(nullable = false, unique = true)
     val phoneNumber: String,
+    @Column(nullable = true)
+    val email: String? = null,
+    @Column(nullable = false)
+    val password: String,
+    @Column(nullable = false)
+    val salt: String,
 )

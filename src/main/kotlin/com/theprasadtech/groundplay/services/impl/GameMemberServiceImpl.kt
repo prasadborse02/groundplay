@@ -1,5 +1,6 @@
 package com.theprasadtech.groundplay.services.impl
 
+import com.theprasadtech.groundplay.domain.entities.GameEntity
 import com.theprasadtech.groundplay.domain.entities.GameMemberEntity
 import com.theprasadtech.groundplay.exceptions.GameFullException
 import com.theprasadtech.groundplay.exceptions.PlayerNotAvailableException
@@ -107,6 +108,76 @@ class GameMemberServiceImpl(
             log.info("Created unenrolled record for player $playerId in game $gameId")
             return savedEntity
         }
+    }
+
+    override fun getPlayerEnrollments(
+        playerId: Long,
+        activeOnly: Boolean,
+    ): List<GameMemberEntity> {
+        log.info("Getting enrollments for player $playerId, activeOnly=$activeOnly")
+
+        // Validate player exists
+        if (!playerRepository.existsById(playerId)) {
+            log.error("Player with ID $playerId not found")
+            throw ResourceNotFoundException("Player", playerId)
+        }
+
+        return if (activeOnly) {
+            gameMemberRepository.findByPlayerIdAndStatus(playerId, true)
+        } else {
+            gameMemberRepository.findByPlayerId(playerId)
+        }
+    }
+
+    override fun getPlayerEnrolledGames(
+        playerId: Long,
+        activeOnly: Boolean,
+    ): List<GameEntity> {
+        log.info("Getting enrolled games for player $playerId, activeOnly=$activeOnly")
+
+        if (!playerRepository.existsById(playerId)) {
+            log.error("Player with ID $playerId not found")
+            throw ResourceNotFoundException("Player", playerId)
+        }
+
+        val enrollments =
+            if (activeOnly) {
+                gameMemberRepository.findByPlayerIdAndStatus(playerId, true)
+            } else {
+                gameMemberRepository.findByPlayerId(playerId)
+            }
+
+        return enrollments.mapNotNull { enrollment ->
+            try {
+                gameRepository.findGameById(enrollment.gameId)
+            } catch (e: Exception) {
+                log.error("Error finding game with ID ${enrollment.gameId}: ${e.message}")
+                null
+            }
+        }
+    }
+
+    // Implementation of isGameOrganizer method
+    override fun isGameOrganizer(
+        gameId: Long,
+        playerId: Long,
+    ): Boolean {
+        log.debug("Checking if player $playerId is the organizer of game $gameId")
+
+        val game = gameRepository.findById(gameId)
+
+        if (game.isEmpty) {
+            log.debug("Game not found with ID: $gameId")
+            return false
+        }
+
+        val isOrganizer = game.get().organizer == playerId
+
+        if (!isOrganizer) {
+            log.debug("Player $playerId is not the organizer of game $gameId")
+        }
+
+        return isOrganizer
     }
 
     // Helper methods

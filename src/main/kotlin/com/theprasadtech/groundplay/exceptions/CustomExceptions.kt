@@ -59,6 +59,14 @@ class UnauthorizedOperationException(
         httpStatus = HttpStatus.FORBIDDEN,
     )
 
+class AccessDeniedException(
+    message: String,
+) : BaseException(
+        errorCode = "ACCESS_DENIED",
+        message = message,
+        httpStatus = HttpStatus.FORBIDDEN,
+    )
+
 class GameFullException(
     gameId: Long,
 ) : BaseException(

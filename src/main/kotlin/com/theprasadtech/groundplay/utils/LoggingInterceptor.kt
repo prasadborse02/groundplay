@@ -17,6 +17,7 @@ class LoggingInterceptor : HandlerInterceptor {
         response: HttpServletResponse,
         handler: Any,
     ): Boolean {
+        // TODO: log received request
         requestTimeThreadLocal.set(System.currentTimeMillis())
 
         val requestBody =
@@ -44,6 +45,7 @@ class LoggingInterceptor : HandlerInterceptor {
         handler: Any,
         ex: Exception?,
     ) {
+        // TODO: log response
         val executionTime = System.currentTimeMillis() - (requestTimeThreadLocal.get() ?: 0)
         requestTimeThreadLocal.remove()
         logger.info("Request Completed - Status: ${response.status}, Time: ${executionTime}ms${ex?.let { ", Error: ${it.message}" } ?: ""}")
