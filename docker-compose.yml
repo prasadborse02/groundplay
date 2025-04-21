@@ -1,0 +1,19 @@
+version: '3.8'
+
+services:
+  app:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://host.docker.internal:5432/groundplay
+      - SPRING_DATASOURCE_USERNAME=postgres
+      - SPRING_DATASOURCE_PASSWORD=mypassword
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=validate
+      - ENCRYPTION_SECRET=defaultEncryptionSecretForDevelopmentEnvironmentOnly
+      - JWT_SECRET=defaultJwtSecretForDevelopmentEnvironmentOnly12345678901234567890
+      - LOG_FILE_PATH=/logs/groundplay.log
+    volumes:
+      - ./logs:/logs
+    extra_hosts:
+      - "host.docker.internal:host-gateway"
